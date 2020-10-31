@@ -2,11 +2,15 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', (req, res) => {
-    res.send('It worked.');
+    res.render('list', {});
 });
 
 router.post('/', (req, res) => {
     res.send('Post worked...');
+});
+
+router.get('/add', (req, res) => {
+    res.render('add', {});
 });
 
 router.route('/:contact_id')
@@ -15,7 +19,7 @@ router.route('/:contact_id')
         next();
     })
     .get((req, res) => {
-        res.send('Get for contact' + contact_id);
+        res.render('edit', {});
     })
     .post((req, res) => {
         res.send('Post for contact' + contact_id);
