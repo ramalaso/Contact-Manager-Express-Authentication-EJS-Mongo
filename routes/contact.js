@@ -1,31 +1,94 @@
 var express = require('express');
 var router = express.Router();
+var _ = require('underscore');
+
+var contacts = [
+    {
+        id: 1,
+        name: 'Raul M.',
+        job: 'Plumber',
+        nickename: 'Ramalaso',
+        email: 'ramalaso@yahoo.es'
+    },
+    {
+        id: 2,
+        name: 'Carla Ricci',
+        job: 'Principal Division Producer',
+        nickename: 'Carla',
+        email: 'cricci@gmail.com'
+    },
+    {
+        id: 3,
+        name: 'Dragan Burns',
+        job: 'Senior Factors Producer',
+        nickename: 'Drago',
+        email: 'itburns@outlook.com'
+    },
+];
+
+
+function lookupContact(contact_id) {
+    return _.find(contacts, function (c) {
+        return c.id == parseInt(contact_id);
+    });
+}
+
+function findMaxId() {
+    return _.max(contacts, function (contact) {
+        return contact.id;
+    });
+}
 
 router.get('/', (req, res) => {
-    res.render('list', {});
+    // return await res.render('list', { contacts: contacts });
+    res.render('list', { contacts });
 });
 
 router.post('/', (req, res) => {
-    res.send('Post worked...');
+    var new_contact_id = findMaxId() + 1;
+    var new_contact = {
+        id: new_contact_id,
+        name: req.body.fullname,
+        job: req.body.job,
+        nickname: req.body.nickname,
+        email: req.body.email
+    };
+
+    contacts.push(new_contact);
+    res.send('New contact created with id: ' + new_contact_id);
 });
 
 router.get('/add', (req, res) => {
-    res.render('add', {});
+    res.render('add', { contact: {} });
 });
 
 router.route('/:contact_id')
     .all(function (req, res, next) {
         contact_id = req.params.contact_id;
+        contact = lookupContact(contact_id);
         next();
     })
     .get((req, res) => {
-        res.render('edit', {});
+        res.render('edit', { contact });
     })
     .post((req, res) => {
-        res.send('Post for contact' + contact_id);
+        if (!contact.notes) {
+            contact.notes = [];
+        }
+        contact.notes.push({
+            created: Date(),
+            note: req.body.notes
+        });
+
+        res.send('Created new note for contact id: ' + contact_id);
     })
     .put((req, res) => {
-        res.send('Put for contact' + contact_id);
+        contact.name = req.body.fullname;
+        contact.job = req.body.job;
+        contact.nickname = req.body.nickname;
+        contact.email = req.body.email;
+
+        res.send('Update suceeded for contact id: ' + contact_id);
     })
     .delete((req, res) => {
         res.send('Delete for contact' + contact_id);

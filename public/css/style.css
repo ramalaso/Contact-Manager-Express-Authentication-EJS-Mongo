@@ -90,3 +90,7 @@ margin-left: 4px;
 color: white;
 text-decoration: underline;
 }
+
+.row {
+    padding: 70px;
+}

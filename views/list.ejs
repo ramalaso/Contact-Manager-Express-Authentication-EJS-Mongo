@@ -5,7 +5,7 @@
     <a href="/contacts/add" id="add" class="btn btn-primary">Add new</a>
 </p>
 
-<table class="table">
+<table class="table col-md-8">
     <thead>
         <tr>
             <th></th>
@@ -15,25 +15,23 @@
         </tr>
     </thead>
     <tbody>
+        <% if(!contacts.length) { %>
+        <tr>
+            <td colspan="4"> You should add a contact</td>
+        </tr>
+        <% } else { %>
+        <% contacts.forEach(contact => { %>
         <tr>
             <td>
-                <input type="checkbox" id="1">
+                <input type="checkbox" id="<%= contact.id %>">
             </td>
             <td>
-                <a href="/contacts/1"> Joe Smith Plumber</a>
+                <a href="/contacts/<%= contact.id %>"> <%= contact.name %> <%= contact.job %> </a>
             </td>
-            <td>Joe</td>
-            <td> <a href="mailito:cricci@gmail.com"> cricci@gmail.com</a></td>
+            <td><%= contact.nickename %> </td>
+            <td><a href="mailito:<%= contact.email %>"><%= contact.email %></a></td>
         </tr>
-        <tr>
-            <td>
-                <input type="checkbox" id="2">
-            </td>
-            <td>
-                <a href="/contacts/2"> Carla Ricci - Principal Division Producer</a>
-            </td>
-            <td>Carla</td>
-            <td> <a href="mailito:carla@gmail.com"> carla@gmail.com</a></td>
-        </tr>
+        <% }) %>
+        <% } %>
     </tbody>
 </table>
