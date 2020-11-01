@@ -44,18 +44,19 @@ router.get('/', (req, res) => {
     res.render('list', { contacts });
 });
 
-router.post('/', (req, res) => {
+router.post('/add', (req, res) => {
+    console.log(req);
     var new_contact_id = findMaxId() + 1;
     var new_contact = {
         id: new_contact_id,
         name: req.body.fullname,
         job: req.body.job,
-        nickname: req.body.nickname,
+        nickename: req.body.nickname,
         email: req.body.email
     };
-
     contacts.push(new_contact);
-    res.send('New contact created with id: ' + new_contact_id);
+    console.log(contacts);
+    res.redirect('/contacts');
 });
 
 router.get('/add', (req, res) => {
@@ -85,9 +86,8 @@ router.route('/:contact_id')
     .put((req, res) => {
         contact.name = req.body.fullname;
         contact.job = req.body.job;
-        contact.nickname = req.body.nickname;
+        contact.nickename = req.body.nickname;
         contact.email = req.body.email;
-
         res.send('Update suceeded for contact id: ' + contact_id);
     })
     .delete((req, res) => {

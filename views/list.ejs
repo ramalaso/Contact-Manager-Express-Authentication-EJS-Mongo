@@ -1,7 +1,6 @@
 <h1>Your contacts</h1>
 <p>Here is a list of your contacts.</p>
 <p>
-    <a href="#" id="delete" class="btn btn-danger">Delete</a>
     <a href="/contacts/add" id="add" class="btn btn-primary">Add new</a>
 </p>
 
@@ -23,7 +22,7 @@
         <% contacts.forEach(contact => { %>
         <tr>
             <td>
-                <input type="checkbox" id="<%= contact.id %>">
+                <a href="/delete/<%= contact.id %>"> <i class="fa fa-trash"></i></a>
             </td>
             <td>
                 <a href="/contacts/<%= contact.id %>"> <%= contact.name %> <%= contact.job %> </a>

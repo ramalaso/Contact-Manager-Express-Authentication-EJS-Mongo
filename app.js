@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const expressLayouts = require('express-ejs-layouts');
+var methodOverride = require('method-override');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -22,6 +23,7 @@ app.set('layout', './layouts/layout');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
