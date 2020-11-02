@@ -22,12 +22,12 @@
         <% contacts.forEach(contact => { %>
         <tr>
             <td>
-                <a href="/delete/<%= contact.id %>"> <i class="fa fa-trash"></i></a>
+                <a href="/<%= contact.id %>"> <i class="fa fa-trash"></i></a>
             </td>
             <td>
                 <a href="/contacts/<%= contact.id %>"> <%= contact.name %> <%= contact.job %> </a>
             </td>
-            <td><%= contact.nickename %> </td>
+            <td><%= contact.nickname %> </td>
             <td><a href="mailito:<%= contact.email %>"><%= contact.email %></a></td>
         </tr>
         <% }) %>

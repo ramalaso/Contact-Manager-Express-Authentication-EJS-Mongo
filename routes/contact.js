@@ -1,97 +1,80 @@
 var express = require('express');
 var router = express.Router();
 var _ = require('underscore');
-
-var contacts = [
-    {
-        id: 1,
-        name: 'Raul M.',
-        job: 'Plumber',
-        nickename: 'Ramalaso',
-        email: 'ramalaso@yahoo.es'
-    },
-    {
-        id: 2,
-        name: 'Carla Ricci',
-        job: 'Principal Division Producer',
-        nickename: 'Carla',
-        email: 'cricci@gmail.com'
-    },
-    {
-        id: 3,
-        name: 'Dragan Burns',
-        job: 'Senior Factors Producer',
-        nickename: 'Drago',
-        email: 'itburns@outlook.com'
-    },
-];
-
-
-function lookupContact(contact_id) {
-    return _.find(contacts, function (c) {
-        return c.id == parseInt(contact_id);
-    });
-}
-
-function findMaxId() {
-    return _.max(contacts, function (contact) {
-        return contact.id;
-    });
-}
+var moment = require('moment');
+var Contact = require('../models/contact');
 
 router.get('/', (req, res) => {
-    // return await res.render('list', { contacts: contacts });
-    res.render('list', { contacts });
+    Contact.find((err, contacts, count) => {
+        // return await res.render('list', { contacts: contacts });
+        res.render('list', { contacts });
+    });
 });
 
-router.post('/add', (req, res) => {
-    console.log(req);
-    var new_contact_id = findMaxId() + 1;
-    var new_contact = {
-        id: new_contact_id,
-        name: req.body.fullname,
-        job: req.body.job,
-        nickename: req.body.nickname,
-        email: req.body.email
-    };
-    contacts.push(new_contact);
-    console.log(contacts);
-    res.redirect('/contacts');
-});
-
-router.get('/add', (req, res) => {
-    res.render('add', { contact: {} });
-});
+router.route('/add')
+    .get(function (req, res) {
+        res.render('add', { contact: {} });
+    })
+    .post(function (req, res) {
+        new Contact({
+            name: req.body.fullname,
+            job: req.body.job,
+            nickname: req.body.nickname,
+            email: req.body.email
+        }).save((err, contact, count) => {
+            if (err) {
+                res.status(400).send('Error saving new contact: ' + err);
+            } else {
+                res.redirect('/contacts');
+            }
+        });
+    });
 
 router.route('/:contact_id')
     .all(function (req, res, next) {
         contact_id = req.params.contact_id;
-        contact = lookupContact(contact_id);
-        next();
+        contact = {};
+        Contact.findById(contact_id, function (err, c) {
+            contact = c;
+            next();
+        });
     })
     .get((req, res) => {
-        res.render('edit', { contact });
+        res.render('edit', { contact: contact, moment: moment });
     })
     .post((req, res) => {
-        if (!contact.notes) {
-            contact.notes = [];
-        }
         contact.notes.push({
-            created: Date(),
             note: req.body.notes
         });
-
-        res.send('Created new note for contact id: ' + contact_id);
+        contact.save(function (err, contact, count) {
+            if (err) {
+                res.status(400).send('Error adding note: ' + err);
+            } else {
+                res.redirect('');
+            }
+        });
     })
     .put((req, res) => {
         contact.name = req.body.fullname;
         contact.job = req.body.job;
         contact.nickename = req.body.nickname;
         contact.email = req.body.email;
-        res.send('Update suceeded for contact id: ' + contact_id);
+        contact.save(function (err, contact, count) {
+            if (err) {
+                res.status(400).send('Error saving contact: ' + err);
+            } else {
+                res.redirect('/contacts/' + contact_id);
+            }
+        });
     })
     .delete((req, res) => {
-        res.send('Delete for contact' + contact_id);
+        contact.remove(function (err, contact) {
+            if (err) {
+                res.status(400).send('Error removing contact: ' + err);
+            } else {
+                res.redirect('/contacts');
+            }
+        });
     });
 
 
