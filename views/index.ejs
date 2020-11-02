@@ -8,6 +8,17 @@
 </head>
 
 <body>
+
+  <% if(user) { %>
+  <p>You are logged in as: <%- user.username %> </p>
+  <a href="/auth/logout" class="btn btn-primary">Logout</a>
+  <% } else { %>
+  <p>
+    <a href="/auth/login" class="btn btn-primary">Please Login</a>
+    <a href="/auth/register" class="btn btn-primary">Register</a>
+  </p>
+  <%}  %>
+
   <h1><%= title %></h1>
   <p>Welcome to <%= title %></p>
   <p>

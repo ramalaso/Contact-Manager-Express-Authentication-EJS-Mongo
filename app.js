@@ -6,10 +6,15 @@ var logger = require('morgan');
 const expressLayouts = require('express-ejs-layouts');
 var methodOverride = require('method-override');
 var mongoose = require('mongoose');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var contacts = require('./routes/contact');
+
+var auth = require('./routes/auth');
 
 var MongoURI = process.env.MONGOURI || 'mongodb://localhost:27017/testdb';
 mongoose.connect(MongoURI, (err, res) => {
@@ -28,11 +33,28 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
+
+app.use(session({
+  secret: 'learn node',
+  resave: true,
+  saveUninitialized: false
+}));
+
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Passport configuration
+app.use(passport.initialize());
+app.use(passport.session());
+
+var Account = require('./models/account');
+passport.use(Account.createStrategy());
+
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 // Set Templating Engine
 app.use(expressLayouts);
@@ -41,6 +63,7 @@ app.set('layout', './layouts/layout');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/contacts', contacts);
+app.use('/auth', auth);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

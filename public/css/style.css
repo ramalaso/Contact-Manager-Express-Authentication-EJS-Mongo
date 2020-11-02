@@ -17,13 +17,13 @@ height: 370px;
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;
-background-color: rgb(131, 15, 199) !important;
+background-color: #111 !important;
 }
 
 .card-header {
     text-align: center;
 }
-
+)
 .social_icon span{
 font-size: 60px;
 margin-left: 10px;
@@ -85,7 +85,7 @@ background-color: white;
 color: white;
 }
 
-form a{
+form a, .card-footer a{
 margin-left: 4px;
 color: white;
 text-decoration: underline;
